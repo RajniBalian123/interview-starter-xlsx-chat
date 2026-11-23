@@ -1,0 +1,9 @@
+name,department,salary,hire_date,active,rating,notes
+Ava Chen,Engineering,"$125,000.00",2022-03-14,true,4.5,Leads the billing squad
+Ben Okafor,Engineering,"$98,500.00",2021-11-02,true,4.0,
+Cleo Martin,Design,"$87,250.00",2023-01-09,false,3.5,On leave until June
+Dan Kim,Engineering,"$110,000.00",2020-06-30,true,,Contractor
+Elif Demir,Product,"$102,750.00",2022-09-19,true,4.8,Promoted in March
+Farah Noor,Design,"$91,000.00",2023-05-22,true,4.2,12
+Gus Patel,Engineering,"$118,400.00",2019-12-01,true,4.6,Leads on-call rotation
+Hana Sato,Product,"$105,300.00",2021-04-27,false,3.9,
