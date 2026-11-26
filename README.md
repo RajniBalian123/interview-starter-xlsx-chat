@@ -52,6 +52,48 @@ Today it just normalises headers to `snake_case` and marks every column as
 The reference implementation in this repo does (1) and (3); (2) and (4) are
 left as the exercise, with tests showing what "done" looks like.
 
+## Column-type inference examples
+
+Running `python -m src.run_demo` on `data/sample_employees.csv` infers this
+schema (8 rows). The raw value is what the CSV holds; the coerced value is
+what `query_data` returns.
+
+| Column | Inferred type | Example raw value | Coerced value |
+| --- | --- | --- | --- |
+| `name` | string | `Ava Chen` | `Ava Chen` |
+| `department` | string | `Engineering` | `Engineering` |
+| `salary` | currency | `$125,000.00` | `125000.0` |
+| `hire_date` | date | `2022-03-14` | `datetime(2022, 3, 14, 0, 0)` |
+| `active` | boolean | `true` | `True` |
+| `rating` | float | `4.5` | `4.5` |
+| `notes` | string | `Leads the billing squad` | `Leads the billing squad` |
+
+How each type is recognised (`src/parse_spreadsheet.py`, `infer_type`):
+
+- **currency** — starts with `$`, `€`, or `£`, with optional thousands
+  separators and two decimals, e.g. `$98,500.00` → `98500.0`.
+- **date** — matches `%Y-%m-%d`, `%d/%m/%Y`, `%m/%d/%Y`, or `%Y/%m/%d`, e.g.
+  `2021-11-02`. A value with a time component (`2022-03-14 09:30:00`) is
+  `datetime` instead.
+- **boolean** — every non-empty value is one of `true` / `false` / `yes` /
+  `no` (case-insensitive), e.g. `false` → `False`.
+- **float** — parses as a number and contains a `.` or an exponent, e.g.
+  `3.5` → `3.5`.
+- **integer** — all digits, e.g. `12` → `12`. Note that `1` / `0` alone are
+  integers, not booleans — the inference only calls a column boolean when
+  its values are words.
+
+Edge cases the sample data exercises:
+
+- **Mixed types fall back to string.** The `notes` column holds text
+  (`Leads the billing squad`), a bare number (`12`), and empty cells, so it
+  is inferred as `string` — guessing the majority type would hide data.
+- **Empty cells are skipped** during inference and coerce to `None`, so Ben
+  Okafor's missing note and Dan Kim's missing rating come back as `None`
+  rather than `""` or `0`.
+- **An all-empty column is `string`**, not an error — there is nothing to
+  infer from.
+
 ## Run it
 
 ```bash
